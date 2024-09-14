@@ -10,7 +10,8 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v2
@@ -26,38 +27,4 @@ jobs:
     - name: Build Docker image
       run: |
         cd /Users/aysegul/Documents/github/Devops-ASPNETCore-WebAPI-Sample/SampleWebApiAspNetCore
-        docker build -t aysegulakbaas/samplewebapiaspnetcore:latest .
-
-    - name: Login to Docker Hub
-      run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-
-    - name: Push Docker image to Docker Hub
-      run: |
-        docker push aysegulakbaas/samplewebapiaspnetcore:latest
-
-    - name: Set up Kubernetes config
-      run: |
-        mkdir -p ~/.kube
-        echo "apiVersion: v1
-        clusters:
-        - cluster:
-            certificate-authority-data: ${{ secrets.KUBE_CA }}
-            server: ${{ secrets.KUBE_SERVER }}
-          name: minikube
-        contexts:
-        - context:
-            cluster: minikube
-            user: minikube
-          name: minikube
-        current-context: minikube
-        users:
-        - name: minikube
-          user:
-            client-certificate-data: ${{ secrets.KUBE_CLIENT_CERT }}
-            client-key-data: ${{ secrets.KUBE_CLIENT_KEY }}" > ~/.kube/config
-
-    - name: Deploy to Kubernetes
-      run: |
-        kubectl apply -f deployment.yaml
-        kubectl apply -f service.yaml
-        kubectl apply -f ingress.yaml
+        docker build -t aysegulakbaas/s
