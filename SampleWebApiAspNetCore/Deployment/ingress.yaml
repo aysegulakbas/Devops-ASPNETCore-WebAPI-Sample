@@ -6,13 +6,13 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: aysegul.dotnetcore.com
+  - host: aysegul-sample-web-api-morgul-duman.com
     http:
       paths:
-      - path: /
+      - path: /api/v1/foods
         pathType: Prefix
         backend:
           service:
-            name: sample-web-api-service
+            name: sample-web-api-service  # Servis adı burada olmalı
             port:
               number: 80
