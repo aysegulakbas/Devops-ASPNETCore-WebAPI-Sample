@@ -46,6 +46,6 @@ jobs:
     steps:
     - name: Deploy to Kubernetes
       run: |
-        kubectl apply -f ./Deployment/deployment.yaml
-        kubectl apply -f ./Deployment/ingress.yaml
-        kubectl apply -f ./Deployment/service.yaml
+        kubectl apply -f SampleWebApiAspNetCore/Deployment/deployment.yaml
+        kubectl apply -f SampleWebApiAspNetCore/Deployment/ingress.yaml
+        kubectl apply -f SampleWebApiAspNetCore/Deployment/service.yaml
