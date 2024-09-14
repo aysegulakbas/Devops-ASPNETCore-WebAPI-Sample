@@ -25,7 +25,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        cd Devops-ASPNETCore-WebAPI-Sample/SampleWebApiAspNetCore/  
+        cd /Users/aysegul/Documents/github/Devops-ASPNETCore-WebAPI-Sample/SampleWebApiAspNetCore
         docker build -t aysegulakbaas/samplewebapiaspnetcore:latest .
 
     - name: Log in to Docker Hub
