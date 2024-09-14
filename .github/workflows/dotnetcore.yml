@@ -1,9 +1,17 @@
+name: .NET Core CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
   build:
     runs-on: self-hosted
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v2
@@ -19,41 +27,11 @@ jobs:
     - name: Build Docker image
       run: |
         docker build -t aysegulakbaas/samplewebapiaspnetcore:latest .
-      
+
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
-        username: aysegulakbaas
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    - name: Push Docker image to Docker Hub
-      run: |
-        docker push aysegulakbaas/samplewebapiaspnetcore:latest
-
-    - name: Set up Kubernetes config
-      run: |
-        mkdir -p ~/.kube
-        echo "apiVersion: v1
-        clusters:
-        - cluster:
-            certificate-authority-data: ${{ secrets.KUBE_CA }}
-            server: ${{ secrets.KUBE_SERVER }}
-          name: minikube
-        contexts:
-        - context:
-            cluster: minikube
-            user: minikube
-          name: minikube
-        current-context: minikube
-        users:
-        - name: minikube
-          user:
-            client-certificate-data: ${{ secrets.KUBE_CLIENT_CERT }}
-            client-key-data: ${{ secrets.KUBE_CLIENT_KEY }}" > ~/.kube/config
-
-    - name: Deploy to Kubernetes
-      run: |
-        kubectl apply -f deployment.yaml
-        kubectl apply -f service.yaml
-        kubectl apply -f ingress.yaml
-
+    - name: Push Docker image to Docke
