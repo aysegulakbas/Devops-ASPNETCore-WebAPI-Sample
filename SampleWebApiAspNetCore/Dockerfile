@@ -5,7 +5,7 @@ WORKDIR /app/SampleWebApiAspNetCore
 # Copy the project file and restore dependencies
 COPY SampleWebApiAspNetCore.csproj ./SampleWebApiAspNetCore/
 WORKDIR /app/SampleWebApiAspNetCore
-RUN dotnet restore
+
 
 # Copy the entire project and build the application
 COPY . ./
