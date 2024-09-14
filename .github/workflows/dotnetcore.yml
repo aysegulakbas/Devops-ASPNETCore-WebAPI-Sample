@@ -25,13 +25,13 @@ jobs:
 
     - name: Build Docker image
       run: |
-        cd path/to/dockerfile  # Dockerfile’ın bulunduğu dizine gidin
+        cd Devops-ASPNETCore-WebAPI-Sample/SampleWebApiAspNetCore/  
         docker build -t aysegulakbaas/samplewebapiaspnetcore:latest .
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
-        username: aysegulakbaas
+        username: "aysegulakbaas"
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
     - name: Push Docker image to Docker Hub
