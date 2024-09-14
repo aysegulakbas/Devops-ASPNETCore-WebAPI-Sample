@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-web-api-deployment
+  labels:
+    app: sample-web-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sample-web-api
+  template:
+    metadata:
+      labels:
+        app: sample-web-api
+    spec:
+      containers:
+      - name: sample-web-api-container
+        image: aysegulakbaas/sample-web-api:latest
+        ports:
+        - containerPort: 80
