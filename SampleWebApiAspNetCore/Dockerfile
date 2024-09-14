@@ -1,6 +1,6 @@
 # Stage 1: Build Stage
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
-WORKDIR /app
+WORKDIR /app/SampleWebApiAspNetCore
 
 # Copy the project file and restore dependencies
 COPY SampleWebApiAspNetCore.csproj ./SampleWebApiAspNetCore/
