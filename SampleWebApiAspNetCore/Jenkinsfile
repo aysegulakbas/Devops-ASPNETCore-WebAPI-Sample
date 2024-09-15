@@ -1,89 +1,54 @@
 pipeline {
     agent any
-
     environment {
-        // Docker Hub Credential ID
-        DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
-        // Docker imaj etiketi
-        IMAGE_TAG = 'latest'
-        // Docker imaj adı
-        IMAGE_NAME = 'aysegulakbaas/samplewebapiaspnetcore'
+        PATH = "/usr/local/share/dotnet:$PATH" // .NET Core'un yüklü olduğu yolu güncelleyin
     }
-
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                // GitHub'dan kodu çek
                 checkout scm
             }
         }
-
         stage('Setup .NET Core') {
             steps {
-                // .NET Core SDK yükle
-                script {
-                    sh 'dotnet --version'
-                }
+                sh 'dotnet --version'
             }
         }
-
         stage('Build with dotnet') {
             steps {
-                // .NET uygulamasını build et
                 sh 'dotnet build --configuration Release'
             }
         }
-
         stage('Publish with dotnet') {
             steps {
-                // .NET uygulamasını publish et
                 sh 'dotnet publish --configuration Release --output ./publish'
             }
         }
-
         stage('Login to Docker Hub') {
             steps {
                 script {
-                    // Docker Hub'a giriş yap
-                    docker.withRegistry('', DOCKER_CREDENTIALS_ID) {
-                        // Docker işlemleri bu blok içinde yapılacak
+                    docker.withRegistry('', 'dockerhub_credentials') {
+                        // Docker Hub işlemleri burada
                     }
                 }
             }
         }
-
         stage('Build and Push Docker Image') {
             steps {
-                script {
-                    // Docker imajını build et
-                    sh '''
-                    cd SampleWebApiAspNetCore
-                    docker build -t ${IMAGE_NAME}:${IMAGE_TAG} --target runtime .
-                    '''
-                    // Docker imajını Docker Hub'a push et
-                    sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
-                }
+                sh '''
+                docker build -t aysegulakbaas/samplewebapiaspnetcore:latest --target runtime .
+                docker push aysegulakbaas/samplewebapiaspnetcore:latest
+                '''
             }
         }
-
         stage('Deploy to Kubernetes') {
             steps {
-                script {
-                    // Kubernetes'e deploy et
-                    sh '''
-                    kubectl apply -f SampleWebApiAspNetCore/Deployment/deployment.yaml
-                    kubectl apply -f SampleWebApiAspNetCore/Deployment/ingress.yaml
-                    kubectl apply -f SampleWebApiAspNetCore/Deployment/service.yaml
-                    '''
-                }
+                sh '''
+                kubectl apply -f SampleWebApiAspNetCore/Deployment/deployment.yaml
+                kubectl apply -f SampleWebApiAspNetCore/Deployment/ingress.yaml
+                kubectl apply -f SampleWebApiAspNetCore/Deployment/service.yaml
+                '''
             }
-        }
-    }
-
-    post {
-        always {
-            // Her durumda yapılacak işlemler
-            cleanWs()
         }
     }
 }
