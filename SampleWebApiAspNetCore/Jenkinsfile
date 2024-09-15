@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')  // Docker Hub credentials
+        KUBE_CONFIG_CREDENTIALS = credentials('kubeconfig-credentials')  // Kubernetes config credentials
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git url: 'https://github.com/aysegulakbas/Devops-ASPNETCore-WebAPI-Sample.git', branch: 'main'
+            }
+        }
+
+        stage('Build .NET Project') {
+            steps {
+                script {
+                    sh 'dotnet build --configuration Release'
+                }
+            }
+        }
+
+        stage('Publish .NET Project') {
+            steps {
+                script {
+                    sh 'dotnet publish --configuration Release --output ./publish'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh """
+                    docker build -t aysegulakbaas/samplewebapiaspnetcore:latest --target runtime .
+                    docker login -u ${DOCKER_HUB_CREDENTIALS_USR} -p ${DOCKER_HUB_CREDENTIALS_PSW}
+                    docker push aysegulakbaas/samplewebapiaspnetcore:latest
+                    """
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    sh """
+                    kubectl apply -f SampleWebApiAspNetCore/Deployment/deployment.yaml
+                    kubectl apply -f SampleWebApiAspNetCore/Deployment/ingress.yaml
+                    kubectl apply -f SampleWebApiAspNetCore/Deployment/service.yaml
+                    """
+                }
+            }
+        }
+    }
+}
