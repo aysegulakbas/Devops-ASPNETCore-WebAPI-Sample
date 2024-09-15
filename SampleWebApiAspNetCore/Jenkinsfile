@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        PATH = "/usr/local/share/dotnet:$PATH" // .NET Core'un yüklü olduğu yolu güncelleyin
+        PATH = "/usr/local/share/dotnet:/usr/local/bin:$PATH" // .NET Core ve Docker yolunu güncelleyin
     }
     stages {
         stage('Checkout') {
