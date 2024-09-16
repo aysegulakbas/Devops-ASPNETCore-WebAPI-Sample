@@ -26,20 +26,14 @@ pipeline {
                 sh 'dotnet publish --configuration Release --output ./publish'
             }
         }
-        stage('Login to Docker Hub') {
-            steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/', 'dockerhub_credentials') {
-                        // Docker Hub işlemleri burada
-                    }
-                }
-            }
-        }
         stage('Build and Push Docker Image') {
             steps {
                 script {
-                    def customImage = docker.build('aysegulakbaas/samplewebapiaspnetcore:latest', '-f SampleWebApiAspNetCore/Dockerfile SampleWebApiAspNetCore')
-                    customImage.push('latest')
+                    // Docker Hub'a giriş yaparak imajı build edip push ediyoruz
+                    docker.withRegistry('https://index.docker.io/', 'dockerhub_credentials') {
+                        def customImage = docker.build('aysegulakbaas/samplewebapiaspnetcore:latest', '-f SampleWebApiAspNetCore/Dockerfile SampleWebApiAspNetCore')
+                        customImage.push('latest')
+                    }
                 }
             }
         }
