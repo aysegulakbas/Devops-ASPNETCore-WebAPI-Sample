@@ -3,7 +3,6 @@ pipeline {
     environment {
         PATH = "/usr/local/bin:/usr/local/share/dotnet:$PATH"
         DOCKER_HOST = 'unix:///Users/aysegul/.docker/run/docker.sock'
-        DOCKER_CONTEXT = 'desktop-linux'
     }
     stages {
         stage('Checkout') {
