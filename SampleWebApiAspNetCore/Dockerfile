@@ -1,23 +1,19 @@
-# Base image olarak .NET SDK kullanıyoruz
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+# .NET SDK kullanarak uygulamayı build ve publish ediyoruz
+FROM mcr.microsoft.com/dotnet/sdk:7.0
+
 WORKDIR /app
 
 # Proje dosyalarını kopyalıyoruz
 COPY . ./
 
-# Uygulamayı restore ediyor ve build ediyoruz
+# Uygulamayı restore, build ve publish ediyoruz
 RUN dotnet restore
 RUN dotnet build -c Release --no-restore
-
-# Uygulamayı publish ediyoruz
 RUN dotnet publish -c Release -o /app/publish --no-build
 
-# Runtime aşamasında sadece ASP.NET runtime'ı kullanıyoruz
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
-WORKDIR /app
-
-# Publish edilen dosyaları runtime container'a kopyalıyoruz
-COPY --from=build /app/publish .
+# ASP.NET runtime'ı ile çalıştırmak için
+# publish edilmiş dosyaları bu aşamada kullanıyoruz
+WORKDIR /app/publish
 
 # Uygulama portunu açıyoruz
 EXPOSE 80
