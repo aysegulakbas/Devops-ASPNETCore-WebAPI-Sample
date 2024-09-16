@@ -10,7 +10,7 @@ WORKDIR /app/SampleWebApiAspNetCore
 COPY . ./
 RUN dotnet publish -c Release -o /app/publish
 
-# Stage 2: Production Stage
+# Stage 2: Runtime Stage
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
 WORKDIR /app
 
@@ -22,4 +22,3 @@ EXPOSE 80
 
 # Set the entry point for the application
 ENTRYPOINT ["dotnet", "SampleWebApiAspNetCore.dll"]
-
