@@ -9,9 +9,7 @@ pipeline {
             steps {
                 // GitHub'dan kodu çek
                 checkout scm
-                // Bulunduğunuz dizini ve dosyaları kontrol edin
-                sh 'pwd'
-                sh 'ls -la'
+             
             }
         }
         stage('Setup .NET Core') {
