@@ -1,14 +1,13 @@
 pipeline {
     agent any
     environment {
-        PATH = "/usr/local/bin:/usr/local/share/dotnet:$PATH"
+        PATH = "/usr/local/bin:/usr/local/share/dotnet:$PATH" // Docker ve .NET Core'un yüklü olduğu yolları güncelleyin
         DOCKER_HOST = 'unix:///Users/aysegul/.docker/run/docker.sock'
         DOCKER_CONTEXT = 'desktop-linux'
     }
     stages {
         stage('Checkout') {
             steps {
-                // GitHub'dan kodu çek
                 checkout scm
             }
         }
