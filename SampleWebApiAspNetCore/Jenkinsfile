@@ -31,6 +31,7 @@ pipeline {
                 script {
                     // Docker Hub'a giriş yaparak imajı build edip push ediyoruz
                     docker.withRegistry('https://index.docker.io/', 'dockerhub_credentials') {
+                        echo 'Logged in to Docker Hub'
                         def customImage = docker.build('aysegulakbaas/samplewebapiaspnetcore:latest', '-f SampleWebApiAspNetCore/Dockerfile SampleWebApiAspNetCore')
                         customImage.push('latest')
                     }
