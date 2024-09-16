@@ -10,25 +10,23 @@ pipeline {
             steps {
                 // GitHub'dan kodu çek
                 checkout scm
-                // Bulunduğunuz dizini kontrol edin
+                // Bulunduğunuz dizini ve dosyaları kontrol edin
                 sh 'pwd'
+                sh 'ls -la'
             }
         }
         stage('Setup .NET Core') {
             steps {
-                // .NET Core sürümünü kontrol edin
                 sh 'dotnet --version'
             }
         }
         stage('Build with dotnet') {
             steps {
-                // Uygulamayı build edin
                 sh 'dotnet build --configuration Release'
             }
         }
         stage('Publish with dotnet') {
             steps {
-                // Uygulamayı yayınlayın
                 sh 'dotnet publish --configuration Release --output ./publish'
             }
         }
@@ -44,17 +42,14 @@ pipeline {
         stage('Build and Push Docker Image') {
             steps {
                 script {
-                    // Bulunduğunuz dizini kontrol edin
-                    sh 'pwd'
-                    sh 'ls -la'
-                    def customImage = docker.build('aysegulakbaas/samplewebapiaspnetcore:latest')
+                    // Docker build komutunu ve yolunu kontrol edin
+                    def customImage = docker.build('aysegulakbaas/samplewebapiaspnetcore:latest', '-f Dockerfile .')
                     customImage.push('latest')
                 }
             }
         }
         stage('Deploy to Kubernetes') {
             steps {
-                // Kubernetes'e uygulamayı dağıtın
                 sh '''
                 kubectl apply -f SampleWebApiAspNetCore/Deployment/deployment.yaml
                 kubectl apply -f SampleWebApiAspNetCore/Deployment/ingress.yaml
