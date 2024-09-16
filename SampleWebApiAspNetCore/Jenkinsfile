@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        PATH = "/usr/local/bin:/usr/local/share/dotnet:$PATH" // Docker ve .NET Core'un yüklü olduğu yolları güncelleyin
+        PATH = "/usr/local/bin:/usr/local/share/dotnet:$PATH"
         DOCKER_HOST = 'unix:///Users/aysegul/.docker/run/docker.sock'
         DOCKER_CONTEXT = 'desktop-linux'
     }
@@ -16,13 +16,9 @@ pipeline {
                 sh 'dotnet --version'
             }
         }
-        stage('Build with dotnet') {
+        stage('Build and Publish with dotnet') {
             steps {
                 sh 'dotnet build --configuration Release'
-            }
-        }
-        stage('Publish with dotnet') {
-            steps {
                 sh 'dotnet publish --configuration Release --output ./publish'
             }
         }
@@ -39,8 +35,6 @@ pipeline {
             steps {
                 script {
                     sh 'pwd'
-                    
-                    // Tek aşamalı Dockerfile için --target parametresini kaldırdık
                     def customImage = docker.build('aysegulakbaas/samplewebapiaspnetcore:latest')
                     customImage.push('latest')
                 }
