@@ -8,8 +8,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // GitHub'dan repoyu klonla veya güncelle
-                sh 'git clone https://github.com/homebrew/homebrew-core /tmp/homebrew-core || (cd /tmp/homebrew-core && git pull)'
+                // GitHub'dan kodu çek
+                checkout scm
             }
         }
         stage('Setup .NET Core') {
