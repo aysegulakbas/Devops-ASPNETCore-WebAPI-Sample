@@ -38,6 +38,10 @@ pipeline {
         stage('Build and Push Docker Image') {
             steps {
                 script {
+                    // Dockerfile'ın bulunduğu dizini yazdır
+                    sh 'pwd'
+                    
+                    // Docker imajını oluştur ve push et
                     def customImage = docker.build('aysegulakbaas/samplewebapiaspnetcore:latest', '--target runtime .')
                     customImage.push('latest')
                 }
@@ -48,9 +52,4 @@ pipeline {
                 sh '''
                 kubectl apply -f SampleWebApiAspNetCore/Deployment/deployment.yaml
                 kubectl apply -f SampleWebApiAspNetCore/Deployment/ingress.yaml
-                kubectl apply -f SampleWebApiAspNetCore/Deployment/service.yaml
-                '''
-            }
-        }
-    }
-}
+                kubectl apply -f SampleWeb
