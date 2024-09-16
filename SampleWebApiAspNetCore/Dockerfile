@@ -1,18 +1,26 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
-WORKDIR /app/SampleWebApiAspNetCore
+# Base image olarak .NET SDK kullanıyoruz
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /app
 
-# Proje dosyasını kopyala ve bağımlılıkları yükle
-COPY SampleWebApiAspNetCore.csproj ./
-RUN dotnet restore
-
-# Projenin geri kalanını kopyala ve build yap
+# Proje dosyalarını kopyalıyoruz
 COPY . ./
-RUN dotnet publish -c Release -o /app/publish
 
-# Production stage
+# Uygulamayı restore ediyor ve build ediyoruz
+RUN dotnet restore
+RUN dotnet build -c Release --no-restore
+
+# Uygulamayı publish ediyoruz
+RUN dotnet publish -c Release -o /app/publish --no-build
+
+# Runtime aşamasında sadece ASP.NET runtime'ı kullanıyoruz
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
 WORKDIR /app
-COPY --from=build-env /app/publish .
 
+# Publish edilen dosyaları runtime container'a kopyalıyoruz
+COPY --from=build /app/publish .
+
+# Uygulama portunu açıyoruz
 EXPOSE 80
+
+# Uygulama başlatma komutu
 ENTRYPOINT ["dotnet", "SampleWebApiAspNetCore.dll"]

@@ -8,30 +8,26 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // İnternet bağlantısı ve Github erişimini kontrol et
-                sh 'ping -c 3 8.8.8.8'
-                sh 'curl -I https://github.com'
-
-                // Kodları depoda çek
-                checkout scm
+                // GitHub'dan repoyu klonla veya güncelle
+                sh 'git clone https://github.com/homebrew/homebrew-core /tmp/homebrew-core || (cd /tmp/homebrew-core && git pull)'
             }
         }
-        stage('.NET Core Kurulumu') {
+        stage('Setup .NET Core') {
             steps {
                 sh 'dotnet --version'
             }
         }
-        stage('.NET ile Derleme') {
+        stage('Build with dotnet') {
             steps {
                 sh 'dotnet build --configuration Release'
             }
         }
-        stage('.NET ile Yayınlama') {
+        stage('Publish with dotnet') {
             steps {
                 sh 'dotnet publish --configuration Release --output ./publish'
             }
         }
-        stage('Docker Hub\'a Giriş') {
+        stage('Login to Docker Hub') {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/', 'dockerhub_credentials') {
@@ -40,7 +36,7 @@ pipeline {
                 }
             }
         }
-        stage('Docker Image Oluşturma ve Pushlama') {
+        stage('Build and Push Docker Image') {
             steps {
                 script {
                     def customImage = docker.build('aysegulakbaas/samplewebapiaspnetcore:latest')
@@ -48,7 +44,7 @@ pipeline {
                 }
             }
         }
-        stage('Kubernetes\'e Dağıtım') {
+        stage('Deploy to Kubernetes') {
             steps {
                 sh '''
                 kubectl apply -f SampleWebApiAspNetCore/Deployment/deployment.yaml
