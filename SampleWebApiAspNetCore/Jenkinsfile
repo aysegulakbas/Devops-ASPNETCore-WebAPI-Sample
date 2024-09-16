@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        PATH = "/usr/local/bin:/usr/local/share/dotnet:$PATH" // Docker ve .NET Core'un yüklü olduğu yolları güncelleyin
+        PATH = "/usr/local/bin:/usr/local/share/dotnet:$PATH"
         DOCKER_HOST = 'unix:///Users/aysegul/.docker/run/docker.sock'
         DOCKER_CONTEXT = 'desktop-linux'
     }
@@ -9,47 +9,19 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+                // Bulunduğunuz dizini kontrol edin
+                sh 'pwd'
+                // Dizin içindeki dosyaları kontrol edin
+                sh 'ls -la'
             }
         }
-        stage('Setup .NET Core') {
-            steps {
-                sh 'dotnet --version'
-            }
-        }
-        stage('Build with dotnet') {
-            steps {
-                sh 'dotnet build --configuration Release'
-            }
-        }
-        stage('Publish with dotnet') {
-            steps {
-                sh 'dotnet publish --configuration Release --output ./publish'
-            }
-        }
-        stage('Login to Docker Hub') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/', 'dockerhub_credentials') {
-                        // Docker Hub işlemleri burada
-                    }
-                }
-            }
-        }
-        stage('Build and Push Docker Image') {
-            steps {
-                script {
-                    def customImage = docker.build('aysegulakbaas/samplewebapiaspnetcore:latest')
+                    sh 'pwd'  // Docker build sırasında dizini kontrol edin
+                    def customImage = docker.build('aysegulakbaas/samplewebapiaspnetcore', '-f path/to/Dockerfile .')
                     customImage.push('latest')
                 }
-            }
-        }
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh '''
-                kubectl apply -f SampleWebApiAspNetCore/Deployment/deployment.yaml
-                kubectl apply -f SampleWebApiAspNetCore/Deployment/ingress.yaml
-                kubectl apply -f SampleWebApiAspNetCore/Deployment/service.yaml
-                '''
             }
         }
     }
