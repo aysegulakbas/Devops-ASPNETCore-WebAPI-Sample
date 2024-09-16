@@ -1,32 +1,37 @@
 pipeline {
     agent any
     environment {
-        PATH = "/usr/local/bin:/usr/local/share/dotnet:$PATH" // Docker ve .NET Core'un yüklü olduğu yolları güncelleyin
+        PATH = "/usr/local/bin:/usr/local/share/dotnet:$PATH"
         DOCKER_HOST = 'unix:///Users/aysegul/.docker/run/docker.sock'
         DOCKER_CONTEXT = 'desktop-linux'
     }
     stages {
         stage('Checkout') {
             steps {
+                // İnternet bağlantısı ve Github erişimini kontrol et
+                sh 'ping -c 3 8.8.8.8'
+                sh 'curl -I https://github.com'
+
+                // Kodları depoda çek
                 checkout scm
             }
         }
-        stage('Setup .NET Core') {
+        stage('.NET Core Kurulumu') {
             steps {
                 sh 'dotnet --version'
             }
         }
-        stage('Build with dotnet') {
+        stage('.NET ile Derleme') {
             steps {
                 sh 'dotnet build --configuration Release'
             }
         }
-        stage('Publish with dotnet') {
+        stage('.NET ile Yayınlama') {
             steps {
                 sh 'dotnet publish --configuration Release --output ./publish'
             }
         }
-        stage('Login to Docker Hub') {
+        stage('Docker Hub\'a Giriş') {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/', 'dockerhub_credentials') {
@@ -35,16 +40,15 @@ pipeline {
                 }
             }
         }
-        stage('Build and Push Docker Image') {
+        stage('Docker Image Oluşturma ve Pushlama') {
             steps {
                 script {
-                    // Burada artık '--target runtime' ihtiyacımız yok
                     def customImage = docker.build('aysegulakbaas/samplewebapiaspnetcore:latest')
                     customImage.push('latest')
                 }
             }
         }
-        stage('Deploy to Kubernetes') {
+        stage('Kubernetes\'e Dağıtım') {
             steps {
                 sh '''
                 kubectl apply -f SampleWebApiAspNetCore/Deployment/deployment.yaml
