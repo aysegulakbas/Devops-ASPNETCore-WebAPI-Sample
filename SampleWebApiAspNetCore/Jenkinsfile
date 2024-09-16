@@ -38,6 +38,8 @@ pipeline {
         stage('Build and Push Docker Image') {
             steps {
                 script {
+                    sh 'pwd'
+                    
                     def customImage = docker.build('aysegulakbaas/samplewebapiaspnetcore:latest', '--target runtime .')
                     customImage.push('latest')
                 }
