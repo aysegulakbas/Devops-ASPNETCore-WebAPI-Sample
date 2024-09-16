@@ -16,12 +16,14 @@ pipeline {
                 sh 'dotnet --version'
             }
         }
-        stage('Build and Publish with dotnet') {
+        stage('Build with dotnet') {
             steps {
-                sh '''
-                dotnet build --configuration Release
-                dotnet publish --configuration Release --output ./publish
-                '''
+                sh 'dotnet build --configuration Release'
+            }
+        }
+        stage('Publish with dotnet') {
+            steps {
+                sh 'dotnet publish --configuration Release --output ./publish'
             }
         }
         stage('Login to Docker Hub') {
@@ -36,7 +38,7 @@ pipeline {
         stage('Build and Push Docker Image') {
             steps {
                 script {
-                    // Dockerfile'daki yeni yapılandırmaya göre Docker image oluştur
+                    // Burada artık '--target runtime' ihtiyacımız yok
                     def customImage = docker.build('aysegulakbaas/samplewebapiaspnetcore:latest')
                     customImage.push('latest')
                 }
