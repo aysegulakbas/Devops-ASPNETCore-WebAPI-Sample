@@ -6,7 +6,6 @@ WORKDIR /app/SampleWebApiAspNetCore
 COPY SampleWebApiAspNetCore.csproj ./SampleWebApiAspNetCore/
 WORKDIR /app/SampleWebApiAspNetCore
 
-
 # Copy the entire project and build the application
 COPY . ./
 RUN dotnet publish -c Release -o /app/publish
@@ -23,3 +22,4 @@ EXPOSE 80
 
 # Set the entry point for the application
 ENTRYPOINT ["dotnet", "SampleWebApiAspNetCore.dll"]
+
