@@ -40,8 +40,8 @@ pipeline {
                 script {
                     sh 'pwd'
                     
-                    // Dockerfile'daki aşama adı 'runtime' olarak ayarlandı
-                    def customImage = docker.build('aysegulakbaas/samplewebapiaspnetcore:latest', '--target runtime .')
+                    // Tek aşamalı Dockerfile için --target parametresini kaldırdık
+                    def customImage = docker.build('aysegulakbaas/samplewebapiaspnetcore:latest')
                     customImage.push('latest')
                 }
             }
