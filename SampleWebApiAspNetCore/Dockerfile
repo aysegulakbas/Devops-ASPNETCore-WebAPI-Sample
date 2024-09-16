@@ -6,12 +6,11 @@ WORKDIR /app/SampleWebApiAspNetCore
 COPY SampleWebApiAspNetCore.csproj ./SampleWebApiAspNetCore/
 WORKDIR /app/SampleWebApiAspNetCore
 
-
 # Copy the entire project and build the application
 COPY . ./
 RUN dotnet publish -c Release -o /app/publish
 
-# Stage 2: Production Stage
+# Stage 2: Runtime Stage
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
 WORKDIR /app
 
