@@ -12,7 +12,6 @@ pipeline {
                 checkout scm
                 // Bulunduğunuz dizini kontrol edin
                 sh 'pwd'
-                sh 'ls -la'
             }
         }
         stage('Setup .NET Core') {
@@ -47,6 +46,7 @@ pipeline {
                 script {
                     // Bulunduğunuz dizini kontrol edin
                     sh 'pwd'
+                    sh 'ls -la'
                     def customImage = docker.build('aysegulakbaas/samplewebapiaspnetcore:latest')
                     customImage.push('latest')
                 }
