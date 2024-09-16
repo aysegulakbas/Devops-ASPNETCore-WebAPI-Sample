@@ -1,22 +1,34 @@
-# Use a base image with .NET SDK and runtime
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
+# Base image
+FROM ubuntu:20.04
 
-# Set working directory
+# Install prerequisites
+RUN apt-get update && \
+    apt-get install -y wget apt-transport-https gnupg && \
+    wget https://packages.microsoft.com/config/ubuntu/20.04/prod.list && \
+    mv prod.list /etc/apt/sources.list.d/mssql-release.list && \
+    wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add - && \
+    apt-get update
+
+# Install .NET SDK
+RUN apt-get install -y dotnet-sdk-7.0
+
+# Install other dependencies if necessary
+# RUN apt-get install -y [other-packages]
+
+# Set the working directory
 WORKDIR /app
 
-# Copy project file and restore dependencies
-COPY SampleWebApiAspNetCore.csproj ./
-RUN dotnet restore
+# Copy the project files
+COPY . /app
 
-# Copy and build the application
-COPY . ./
-RUN dotnet publish -c Release -o /app/publish
+# Build the application
+RUN dotnet build --configuration Release
 
-# Use the runtime image to create the final image
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
-WORKDIR /app
-COPY --from=build-env /app/publish .
+# Publish the application
+RUN dotnet publish --configuration Release --output /app/publish
 
-# Expose port and set entry point
+# Set the entry point
+ENTRYPOINT ["dotnet", "/app/publish/SampleWebApiAspNetCore.dll"]
+
+# Expose the port
 EXPOSE 80
-ENTRYPOINT ["dotnet", "SampleWebApiAspNetCore.dll"]
