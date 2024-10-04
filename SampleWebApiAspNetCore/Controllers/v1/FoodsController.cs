@@ -50,11 +50,7 @@ namespace SampleWebApiAspNetCore.Controllers.v1
             var links = _linkService.CreateLinksForCollection(queryParameters, allItemCount, version);
             var toReturn = foodItems.Select(x => _linkService.ExpandSingleFoodItem(x, x.Id, version));
 
-            return Ok(new
-            {
-                value = toReturn,
-                links = links
-            });
+          return Content("<xml>This is poorly formatted xml.</xml>", "text/xml");
         }
 
         [HttpGet]
