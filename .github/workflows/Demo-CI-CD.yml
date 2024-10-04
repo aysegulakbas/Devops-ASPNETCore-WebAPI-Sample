@@ -38,6 +38,7 @@ jobs:
         cd SampleWebApiAspNetCore
         docker build -t aysegulakbaas/samplewebapiaspnetcore:latest --target runtime .
         docker push aysegulakbaas/samplewebapiaspnetcore:latest
+
   deploy:
     runs-on: self-hosted
     needs: build
